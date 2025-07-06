@@ -1,6 +1,5 @@
 #pragma once
 
-// #include "sqlite/aggregate.hpp"
 #include "sqlite/aggregate.hpp"
 #include "sqlite/backup.hpp"
 #include "sqlite/blob.hpp"
@@ -12,3 +11,4 @@
 #include "sqlite/pointer.hpp"
 #include "sqlite/stmt.hpp"
 #include "sqlite/tag.hpp"
+#include "sqlite/transaction.hpp"
