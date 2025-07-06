@@ -128,6 +128,31 @@ constexpr inline auto invoke_agg_final = +[](context_raw *ctx) {
 };
 } // namespace detail
 
+/**
+ * @brief Creates and registers a custom aggregate (or window) function with SQLite.
+ *
+ * This function sets up an aggregate or window function of type `T` in the given SQLite
+ * database connection. It handles the registration of the step, inverse, value, and final
+ * callbacks, as well as the management of any state required by the aggregate function.
+ *
+ * @tparam T      The aggregate function class type. Must provide at least a `step` and
+ * `value` methods, and optionally `inverse` method for window functions.
+ * @tparam Args   Types of constructor arguments for the aggregate state object.
+ * @param db      SQLite database connection pointer.
+ * @param name    Name of the aggregate function as it will be used in SQL.
+ * @param flag    Flags for SQLite function creation (e.g., SQLITE_UTF8).
+ * @param args    Arguments forwarded to the constructor of the aggregate state object.
+ * @return        An `error` enum indicating success or the type of failure.
+ *
+ * @note
+ * - If `T` is not a "simple" aggregate, a control object is allocated and managed.
+ * - If `T` is invertible (supports window functions), the inverse and value callbacks are
+ * registered.
+ * - The function uses `sqlite3_create_window_function` to register the aggregate or
+ * window function.
+ * - The function ensures proper memory management and error handling for the aggregate
+ * state.
+ */
 template <typename T, typename... Args>
 error create_aggregate(conn_raw *db, std::string const &name, int flag, Args &&...args) {
 
