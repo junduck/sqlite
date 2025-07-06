@@ -8,7 +8,7 @@
 
 namespace ju::sqlite {
 
-class backup {
+class [[nodiscard("Backup finalised on discard.")]] backup {
   struct deleter_type {
     void operator()(backup_raw *b) const noexcept { sqlite3_backup_finish(b); }
   };

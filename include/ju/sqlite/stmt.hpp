@@ -112,7 +112,7 @@ public:
   error state() const noexcept { return to_error(rc); }
 };
 
-class stmt {
+class [[nodiscard("Statement finalised on discard.")]] stmt {
   struct deleter_type {
     void operator()(stmt_raw *s) const noexcept { sqlite3_finalize(s); }
   };

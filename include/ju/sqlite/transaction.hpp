@@ -13,7 +13,7 @@ enum class transaction_mode : int {
   exclusive,
 };
 
-class transaction {
+class [[nodiscard("Transaction rolled back on discard.")]] transaction {
   conn_raw *db;
   bool active;
 
@@ -96,4 +96,9 @@ public:
 
   bool is_active() const noexcept { return db && active; }
 };
+
+inline transaction begin_transaction(conn_raw *db,
+                                     transaction_mode mode = transaction_mode::deferred) {
+  return transaction{db, mode};
+}
 } // namespace ju::sqlite

@@ -155,7 +155,7 @@ using managed_ptr = pointer_t<T, "$ptr$", detail::managed_deleter<T>>;
  * @return managed_ptr<T> Managed pointer to the constructed object.
  */
 template <typename T, typename... Args>
-managed_ptr<T> make_managed(Args &&...args) {
+[[nodiscard("Memory leaked on discard.")]] managed_ptr<T> make_managed(Args &&...args) {
   managed_ptr<T> p{sqlite3_malloc64(detail::storage_size_v<T>)};
   if (p)
     try {
