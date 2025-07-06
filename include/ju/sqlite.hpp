@@ -5,6 +5,7 @@
 #include "sqlite/blob.hpp"
 #include "sqlite/collation.hpp"
 #include "sqlite/common.hpp"
+#include "sqlite/conn.hpp"
 #include "sqlite/context.hpp"
 #include "sqlite/error.hpp"
 #include "sqlite/function.hpp"
