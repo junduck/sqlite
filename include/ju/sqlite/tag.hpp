@@ -38,6 +38,11 @@ struct cast_tag {
   friend auto tag_invoke(cast_tag, type_t<int64_t>, value_raw *val) noexcept {
     return sqlite3_value_int64(val);
   }
+  // TODO: handling value_raw* may be dangerous due to the "protected value" design
+  // Owning wrappers to make value and protected_value different types?
+  friend auto tag_invoke(cast_tag, type_t<value_raw *>, value_raw *val) noexcept {
+    return val;
+  }
   template <text_like T>
   friend auto tag_invoke(cast_tag, type_t<T>, value_raw *val) noexcept(
       std::is_nothrow_constructible_v<std::decay_t<T>, char const *, size_t>) {
@@ -61,6 +66,10 @@ struct cast_tag {
   }
   friend auto tag_invoke(cast_tag, type_t<int64_t>, stmt_raw *st, int icol) noexcept {
     return sqlite3_column_int64(st, icol);
+  }
+  friend auto tag_invoke(cast_tag, type_t<stmt_raw *>, stmt_raw *st, int icol) noexcept {
+    static_cast<void>(icol);
+    return st;
   }
   template <text_like T>
   friend auto tag_invoke(cast_tag, type_t<T>, stmt_raw *st, int icol) noexcept(
