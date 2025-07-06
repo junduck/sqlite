@@ -111,6 +111,7 @@ class pointer_t {
 
   friend auto tag_invoke(tag::bind_tag, stmt_raw *st, int idx, pointer_t p) {
     auto rc = sqlite3_bind_pointer(st, idx, p, type_id, d);
+    return to_error(rc);
   }
 
   friend auto tag_invoke(tag::bind_tag, context_raw *ctx, pointer_t p) {
