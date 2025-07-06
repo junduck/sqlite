@@ -2,6 +2,7 @@
 
 // #include "sqlite/aggregate.hpp"
 #include "sqlite/aggregate.hpp"
+#include "sqlite/backup.hpp"
 #include "sqlite/blob.hpp"
 #include "sqlite/collation.hpp"
 #include "sqlite/common.hpp"

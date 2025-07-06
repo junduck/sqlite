@@ -12,6 +12,7 @@ using conn_raw = ::sqlite3;
 using context_raw = ::sqlite3_context;
 using stmt_raw = ::sqlite3_stmt;
 using value_raw = ::sqlite3_value;
+using backup_raw = ::sqlite3_backup;
 using destructor_type_raw = ::sqlite3_destructor_type;
 
 template <typename T>
