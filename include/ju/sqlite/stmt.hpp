@@ -295,6 +295,29 @@ public:
   }
 
   /**
+   * @brief Binds values to the prepared statement and executes it.
+   *
+   * This function binds the provided values to the prepared statement and then
+   * executes it. If binding fails, it clears the bindings before returning the error.
+   * It also clears and reset the statement after execution.
+   *
+   * @tparam Ts Types of the values to bind.
+   * @param args Values to bind to the prepared statement.
+   * @return An `error` indicating the result of the binding and execution operation.
+   */
+  template <typename... Ts>
+  [[nodiscard]] error bind_exec(Ts &&...args) const noexcept {
+    auto rc = bind(std::forward<Ts>(args)...);
+    if (is_ok(rc)) {
+      rc = exec(true, true);
+    } else {
+      // If binding failed, clear bindings before returning the error
+      clear_bindings();
+    }
+    return rc;
+  }
+
+  /**
    * @brief Returns the number of columns in the result set of the prepared statement.
    *
    * @return The number of columns in the result set.
