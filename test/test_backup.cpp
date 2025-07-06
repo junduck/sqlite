@@ -95,7 +95,7 @@ TEST(BackupTest, PrepareBackupFromIrisDb) {
   using namespace ju::sqlite;
 
   // Test assumes iris.db is copied to data/iris.db by CMake
-  std::string iris_path = "../data/iris.db";
+  std::string iris_path = "data/iris.db";
 
   // Check if file exists and is not empty
   std::filesystem::path file_path(iris_path);
@@ -130,7 +130,7 @@ TEST(BackupTest, PrepareBackupFromIrisDb) {
 TEST(BackupTest, BackupStepAndFinish) {
   using namespace ju::sqlite;
 
-  std::string iris_path = "../data/iris.db";
+  std::string iris_path = "data/iris.db";
 
   sqlite3 *source = open_database(iris_path);
   ASSERT_NE(source, nullptr);
@@ -163,7 +163,7 @@ TEST(BackupTest, BackupStepAndFinish) {
 TEST(BackupTest, BackupAllAtOnce) {
   using namespace ju::sqlite;
 
-  std::string iris_path = "../data/iris.db";
+  std::string iris_path = "data/iris.db";
 
   sqlite3 *source = open_database(iris_path);
   ASSERT_NE(source, nullptr);
@@ -187,7 +187,7 @@ TEST(BackupTest, BackupAllAtOnce) {
 TEST(BackupTest, VerifyBackupIntegrity) {
   using namespace ju::sqlite;
 
-  std::string iris_path = "../data/iris.db";
+  std::string iris_path = "data/iris.db";
 
   sqlite3 *source = open_database(iris_path);
   ASSERT_NE(source, nullptr);
@@ -226,7 +226,7 @@ TEST(BackupTest, VerifyBackupIntegrity) {
 TEST(BackupTest, PrepareBackupWithCustomNames) {
   using namespace ju::sqlite;
 
-  std::string iris_path = "../data/iris.db";
+  std::string iris_path = "data/iris.db";
 
   sqlite3 *source = open_database(iris_path);
   ASSERT_NE(source, nullptr);
@@ -251,7 +251,7 @@ TEST(BackupTest, PrepareBackupWithCustomNames) {
 TEST(BackupTest, MoveSemantics) {
   using namespace ju::sqlite;
 
-  std::string iris_path = "../data/iris.db";
+  std::string iris_path = "data/iris.db";
 
   sqlite3 *source = open_database(iris_path);
   ASSERT_NE(source, nullptr);
@@ -302,7 +302,7 @@ TEST(BackupTest, BackupFailsWithInvalidDatabases) {
 TEST(BackupTest, BackupWithAttachedDatabase) {
   using namespace ju::sqlite;
 
-  std::string iris_path = "../data/iris.db";
+  std::string iris_path = "data/iris.db";
 
   sqlite3 *source = open_database(iris_path);
   ASSERT_NE(source, nullptr);

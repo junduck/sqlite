@@ -15,4 +15,4 @@ include(GoogleTest)
 gtest_discover_tests(test_main)
 
 # Copy test data to the build directory
-file(COPY "${CMAKE_SOURCE_DIR}/data" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/data")
+file(COPY "${CMAKE_SOURCE_DIR}/data" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
