@@ -82,9 +82,11 @@ TEST(BackupTest, PrepareBackupWithNonexistentSource) {
     source = nullptr;
   }
 
-  // Test backup with null source
-  auto bak = prepare_backup_main(dest, source);
-  EXPECT_FALSE(bak) << "Backup with null source should fail";
+  {
+    // Test backup with null source
+    auto bak = prepare_backup_main(dest, source);
+    EXPECT_FALSE(bak) << "Backup with null source should fail";
+  }
 
   sqlite3_close(dest);
 }
@@ -108,15 +110,17 @@ TEST(BackupTest, PrepareBackupFromIrisDb) {
   sqlite3 *dest = open_database(":memory:");
   ASSERT_NE(dest, nullptr);
 
-  // Test backup preparation with error checking
-  sqlite3_backup *raw_backup = sqlite3_backup_init(dest, "main", source, "main");
-  EXPECT_NE(raw_backup, nullptr) << "sqlite3_backup_init failed";
+  {
+    // Test backup preparation with error checking
+    sqlite3_backup *raw_backup = sqlite3_backup_init(dest, "main", source, "main");
+    EXPECT_NE(raw_backup, nullptr) << "sqlite3_backup_init failed";
 
-  if (raw_backup) {
-    // Test our backup wrapper
-    backup bak(raw_backup);
-    EXPECT_TRUE(bak) << "Failed to create backup wrapper";
-    EXPECT_NE(bak.handle(), nullptr);
+    if (raw_backup) {
+      // Test our backup wrapper
+      backup bak(raw_backup);
+      EXPECT_TRUE(bak) << "Failed to create backup wrapper";
+      EXPECT_NE(bak.handle(), nullptr);
+    }
   }
 
   sqlite3_close(source);
@@ -134,21 +138,23 @@ TEST(BackupTest, BackupStepAndFinish) {
   sqlite3 *dest = open_database(":memory:");
   ASSERT_NE(dest, nullptr);
 
-  auto bak = prepare_backup_main(dest, source);
-  ASSERT_TRUE(bak);
+  {
+    auto bak = prepare_backup_main(dest, source);
+    ASSERT_TRUE(bak);
 
-  // Perform backup step by step
-  error err = bak.step(5); // Copy 5 pages at a time
-  while (err == error::ok) {
-    err = bak.step(5);
+    // Perform backup step by step
+    error err = bak.step(5); // Copy 5 pages at a time
+    while (err == error::ok) {
+      err = bak.step(5);
+    }
+
+    // Should end with done, not an error
+    EXPECT_EQ(err, error::done) << "Backup should complete with 'done' status";
+
+    // Manually finish the backup
+    err = bak.finish();
+    EXPECT_EQ(err, error::ok) << "Backup finish should return ok";
   }
-
-  // Should end with done, not an error
-  EXPECT_EQ(err, error::done) << "Backup should complete with 'done' status";
-
-  // Manually finish the backup
-  err = bak.finish();
-  EXPECT_EQ(err, error::ok) << "Backup finish should return ok";
 
   sqlite3_close(source);
   sqlite3_close(dest);
