@@ -96,7 +96,7 @@ template <typename F>
 constexpr inline auto invoke_userdata_func =
     +[](context_raw *ctx, int argc, value_raw **argv) {
       using trait = callable_traits_t<F>;
-      static_cast<void>(argc);
+      std::ignore = argc;
       F *callable = userdata<F>(ctx);
       JUSQLITE_TRY_CTX({
         // Check if return type is void
@@ -116,7 +116,7 @@ template <typename F>
 constexpr inline auto invoke_stateless_func =
     +[](context_raw *ctx, int argc, value_raw **argv) {
       using trait = callable_traits_t<F>;
-      static_cast<void>(argc);
+      std::ignore = argc;
       JUSQLITE_TRY_CTX({
         // Check if return type is void
         if constexpr (std::is_void_v<typename trait::return_type>) {

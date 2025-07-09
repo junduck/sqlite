@@ -68,7 +68,7 @@ struct cast_tag {
     return sqlite3_column_int64(st, icol);
   }
   friend auto tag_invoke(cast_tag, type_t<stmt_raw *>, stmt_raw *st, int icol) noexcept {
-    static_cast<void>(icol);
+    std::ignore = icol;
     return st;
   }
   template <text_like T>

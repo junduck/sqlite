@@ -90,7 +90,7 @@ using inverse_traits_t = method_traits_t<decltype(&T::inverse)>;
 template <typename T>
 constexpr inline auto invoke_agg_step =
     +[](context_raw *ctx, int argc, value_raw **argv) {
-      static_cast<void>(argc);
+      std::ignore = argc;
       auto *agg = aggdata<T>(ctx);
       JUSQLITE_VALIDATE_CTX(agg, ctx);
 
@@ -109,7 +109,7 @@ constexpr inline auto invoke_agg_value = +[](context_raw *ctx) {
 template <typename T>
 constexpr inline auto invoke_agg_inverse =
     +[](context_raw *ctx, int argc, value_raw **argv) {
-      static_cast<void>(argc);
+      std::ignore = argc;
       auto *agg = aggdata<T>(ctx);
       JUSQLITE_VALIDATE_CTX(agg, ctx);
 

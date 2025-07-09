@@ -51,7 +51,7 @@ struct concat_agg {
 struct error_agg {
 
   void step(int value) {
-    static_cast<void>(value); // Suppress unused parameter warning
+    std::ignore = value; // Suppress unused parameter warning
     throw std::runtime_error("Intentional test error");
   }
 
@@ -65,7 +65,7 @@ struct context_agg {
   void step(ju::sqlite::context_raw *ctx, int value) {
     values.push_back(value);
     // We could use the context to set aux data or check user data
-    static_cast<void>(ctx);
+    std::ignore = ctx;
   }
 
   int value() const {
