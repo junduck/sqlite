@@ -1,5 +1,7 @@
 #include "gtest/gtest.h"
 
+#include <deque>
+
 #include "ju/sqlite/aggregate.hpp"
 
 static bool agg1_dtor_called = false;
