@@ -401,4 +401,25 @@ inline stmt prepare_stmt(conn_raw *db, std::string const &sql) {
   return stmt{raw_stmt};
 }
 
+/**
+ * @brief Enhanced statement preparation with error context
+ *
+ * @param db Database connection
+ * @param sql SQL statement to prepare
+ * @param[out] error_out Optional error information output
+ * @return Prepared statement or empty stmt on failure
+ */
+inline stmt
+prepare_stmt_ex(conn_raw *db, std::string const &sql, error *error_out = nullptr) {
+  stmt_raw *raw_stmt = nullptr;
+  auto rc = sqlite3_prepare_v2(db, sql.c_str(), -1, &raw_stmt, nullptr);
+  if (error_out) {
+    *error_out = to_error(rc);
+  }
+  if (rc != SQLITE_OK) {
+    return stmt{nullptr};
+  }
+  return stmt{raw_stmt};
+}
+
 } // namespace ju::sqlite
