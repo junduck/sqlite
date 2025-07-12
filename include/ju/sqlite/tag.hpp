@@ -1,5 +1,6 @@
 #pragma once
 
+#include <optional>
 #include <system_error>
 
 #include <ju/tag_invoke.hpp>
@@ -56,6 +57,15 @@ struct cast_tag {
     auto p = sqlite3_value_blob(val);
     auto n = sqlite3_value_bytes(val);
     return std::decay_t<T>{static_cast<unsigned char const *>(p), static_cast<size_t>(n)};
+  }
+  template <typename T>
+  friend auto tag_invoke(cast_tag, type_t<std::optional<T>>, value_raw *val) noexcept(
+      noexcept(tag_invoke(cast_tag{}, type_t<T>{}, val)) &&
+      std::is_nothrow_move_constructible_v<T>) {
+    if (sqlite3_value_type(val) == SQLITE_NULL) {
+      return std::optional<T>{};
+    }
+    return std::optional<T>{ju::tag_invoke(cast_tag{}, type_t<T>{}, val)};
   }
 
   friend auto tag_invoke(cast_tag, type_t<double>, stmt_raw *st, int icol) noexcept {
@@ -127,6 +137,16 @@ struct bind_tag {
         st, icol, c_str, std::strlen(c_str), SQLITE_STATIC, SQLITE_UTF8);
     return to_error(rc);
   }
+  template <typename T>
+  friend error
+  tag_invoke(bind_tag, stmt_raw *st, int icol, std::optional<T> const &v) noexcept {
+    if (v.has_value()) {
+      return ju::tag_invoke(bind_tag{}, st, icol, *v);
+    } else {
+      auto rc = sqlite3_bind_null(st, icol);
+      return to_error(rc);
+    }
+  }
 
   friend void tag_invoke(bind_tag, context_raw *ctx, double v) noexcept {
     sqlite3_result_double(ctx, v);
@@ -153,6 +173,14 @@ struct bind_tag {
   }
   friend void tag_invoke(bind_tag, context_raw *ctx, char const *c_str) noexcept {
     sqlite3_result_text64(ctx, c_str, std::strlen(c_str), SQLITE_STATIC, SQLITE_UTF8);
+  }
+  template <typename T>
+  friend void tag_invoke(bind_tag, context_raw *ctx, std::optional<T> const &v) noexcept {
+    if (v.has_value()) {
+      ju::tag_invoke(bind_tag{}, ctx, *v);
+    } else {
+      sqlite3_result_null(ctx);
+    }
   }
 
   friend void tag_invoke(bind_tag, context_raw *ctx, error e) noexcept {
