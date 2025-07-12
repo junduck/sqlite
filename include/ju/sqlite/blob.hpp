@@ -6,6 +6,7 @@
 #include <ranges>
 #include <string>
 #include <string_view>
+#include <vector>
 
 namespace ju::sqlite {
 
@@ -28,6 +29,17 @@ concept blob_like = detail::view_of<T, unsigned char>;
 using text_view = std::string_view;
 using blob_view = std::basic_string_view<unsigned char>;
 
+/**
+ * @brief Safe blob wrapper implemented by std::vector
+ */
+class safe_blob : public std::vector<unsigned char> {
+  using base = std::vector<unsigned char>;
+
+public:
+  using base::base;
+  safe_blob(unsigned char const *ptr, size_t size) : base(ptr, ptr + size) {}
+};
+
 struct uuid_array : public std::array<unsigned char, 16> {
   using base = std::array<unsigned char, 16>;
   using base::base;
@@ -49,6 +61,10 @@ struct uuid_array : public std::array<unsigned char, 16> {
     return val;
   }
 };
+
+static_assert(text_like<text_view>);
+static_assert(blob_like<blob_view>);
+static_assert(blob_like<safe_blob>);
 static_assert(blob_like<uuid_array>);
 
 } // namespace ju::sqlite
