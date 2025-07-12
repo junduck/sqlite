@@ -4,6 +4,7 @@
 #include <string>
 
 #include "common.hpp"
+#include "error.hpp"
 
 namespace ju::sqlite {
 class [[nodiscard("Connection closed on discard.")]] conn {
@@ -34,6 +35,57 @@ public:
   }
 
   void close() noexcept { db.reset(); }
+
+  /**
+   * @brief Get the last error from this connection
+   */
+  error last_error() const noexcept {
+    return db ? to_error(sqlite3_errcode(handle())) : error::misuse;
+  }
+
+  /**
+   * @brief Get the last extended error from this connection
+   */
+  error last_extended_error() const noexcept {
+    return db ? to_error(sqlite3_extended_errcode(handle())) : error::misuse;
+  }
+
+  /**
+   * @brief Get the last error message from this connection
+   */
+  std::string last_error_message() const {
+    if (!db)
+      return "Invalid connection";
+    auto msg = sqlite3_errmsg(handle());
+    return msg ? std::string{msg} : "Unknown error";
+  }
+
+  /**
+   * @brief Execute a simple SQL statement (no parameters/results)
+   */
+  error exec(std::string const &sql) const noexcept {
+    if (!db)
+      return error::misuse;
+    int rc = sqlite3_exec(handle(), sql.c_str(), nullptr, nullptr, nullptr);
+    return to_error(rc);
+  }
+
+  /**
+   * @brief Get the number of affected rows from last operation
+   */
+  int changes() const noexcept { return db ? sqlite3_changes(handle()) : 0; }
+
+  /**
+   * @brief Get the total number of changes on this connection
+   */
+  int total_changes() const noexcept { return db ? sqlite3_total_changes(handle()) : 0; }
+
+  /**
+   * @brief Get the last inserted row ID
+   */
+  int64_t last_insert_rowid() const noexcept {
+    return db ? sqlite3_last_insert_rowid(handle()) : 0;
+  }
 };
 
 /**
